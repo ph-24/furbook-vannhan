@@ -3,11 +3,11 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Furbook</title>
-	<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{asset('css/app.css')}}">
 </head>
 <body>
 	<div class="container">
-		@yield('header');
+		@yield('header')
 	</div>
 	@if (Session::has('success'))
 	<div class="alert alert-success">

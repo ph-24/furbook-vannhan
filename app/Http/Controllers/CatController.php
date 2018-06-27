@@ -5,6 +5,7 @@ namespace Furbook\Http\Controllers;
 use Illuminate\Http\Request;
 use Furbook\Cat;
 use Validator;
+use Furbook\Http\Requests\CatRequest;
 
 class CatController extends Controller
 {
@@ -39,32 +40,43 @@ class CatController extends Controller
     public function store(Request $request)
     {
         //dd($request->all());
+        //C1: 
         $validator = $request->validate(
             [
-                'name'=>'required|size:255',
+                'name'=>'required|max:255',
                 'date_of_birth' => 'required|date_format:"Y/m/d"',
                 'breed_id'=>'required|numeric'
             ],
             [
-             'required' => 'Cột :attribute là bắt buộc.',
-             'size' => 'Cột :attribute độ dài phải nhỏ hơn:size .',
-             'date_format' => 'Cột :attribute định dạng phải là "Y/m/d".',
-             'numeric' => 'Cột :attribute phải là kiểu số.',
-         ]
-        );
-       // $validator = Validator::make($request->all(), [
-       //     'name'=>'required|size:255',
-       //     'date_of_birth' => 'required|date_format:"Y/m/d"',
-       //     'breed_id'=>'required|numeric'
-       // ]);
+               'required' => 'Cột :attribute là bắt buộc.',
+               'max' => 'Cột :attribute độ dài phải nhỏ hơn:size .',
+               'date_format' => 'Cột :attribute định dạng phải là "Y/m/d".',
+               'numeric' => 'Cột :attribute phải là kiểu số.',
+           ]
+       );
        // 
-        if ($validator->fails()) {
-            return redirect('cat.create')
-            ->withErrors($validator)
-            ->withInput();
-        }
+       // C2: 
+       //  $validator = Validator::make($request->all(), [
+       //      'name'=>'required|max:255',
+       //      'date_of_birth' => 'required|date_format:"Y/m/d"',
+       //      'breed_id'=>'required|numeric'
+       //  ],
+       //  [
+       //     'required' => 'Cột :attribute là bắt buộc.',
+       //     'max' => 'Cột :attribute độ dài phải nhỏ hơn:size .',
+       //     'date_format' => 'Cột :attribute định dạng phải là "Y/m/d".',
+       //     'numeric' => 'Cột :attribute phải là kiểu số.',
+       // ]);
+
+       //  if ($validator->fails()) {
+       //      return redirect('cat.create')
+       //      ->withErrors($validator)
+       //      ->withInput();
+       //  }
+       //  
         //insert cat
         $cat = Cat::create($request->all());
+
         //Redirect back show cat
         return redirect()
         ->route('cat.show',$cat->id)
@@ -98,17 +110,17 @@ class CatController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  CatRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,Cat $cat)
+    public function update(CatRequest $request,Cat $cat)
     {
-     $cat->update($request->all());
-     return redirect()
-     ->route('cat.show', $cat->id)
-     ->withSuccess('Update cat success');
- }
+       $cat->update($request->all());
+       return redirect()
+       ->route('cat.show', $cat->id)
+       ->withSuccess('Update cat success');
+   }
 
     /**
      * Remove the specified resource from storage.

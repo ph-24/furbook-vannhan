@@ -32,14 +32,14 @@ Route::get('/', function () {
     // return view('cats/show', array('number'=>10));
     // 
     // return view('cats/index')->with('cats','title');
-    return redirect('cats');
+    return redirect('cat');
 });
-//list cat
-Route::get('/cats',function(){
-    $cats= Furbook\Cat::All();//select * form cats
-    // dd($cats[0]->breed);
-    return view('cats/index')->with('cats',$cats);   
-});
+// //list cat
+// Route::get('/cats',function(){
+//     $cats= Furbook\Cat::All();//select * form cats
+//     // dd($cats[0]->breed);
+//     return view('cats/index')->with('cats',$cats);   
+// });
 
 //Display list cats of breed name
 Route::get('/cats/breeds/{name}',function($name){
@@ -47,53 +47,55 @@ Route::get('/cats/breeds/{name}',function($name){
     return view('cats.index')->with('breed',$breed)->with('cats', $breed->cats);
 });
 
-//Display info cat
-DB::enableQueryLog();//kiem tra cau lenh sql
-//Route Model Binding
-Route::get('/cats/{id}', function(/*Furbook\Cat*/ $id){
-    //dd($cat);
-    //dd(DB::getQueryLog());//kiem tra cau lenh sql
-    $cat = Furbook\Cat::find(/*$cat->*/$id);
-    return view('cats.show')->with('cat',$cat);
-})->where('id', '[0-9]+');
+// //Display info cat
+// DB::enableQueryLog();//kiem tra cau lenh sql
+// //Route Model Binding
+// Route::get('/cats/{id}', function(/*Furbook\Cat*/ $id){
+//     //dd($cat);
+//     //dd(DB::getQueryLog());//kiem tra cau lenh sql
+//     $cat = Furbook\Cat::find(/*$cat->*/$id);
+//     return view('cats.show')->with('cat',$cat);
+// })->where('id', '[0-9]+');
 
-//create a new cats
-Route::get('/cats/create', function(){
-    return view('cats.create');
-});
+// //create a new cats
+// Route::get('/cats/create', function(){
+//     return view('cats.create');
+// });
 
-Route::post('/cats',function(){
-    //dd(Request::all());
-    //dd(Input::all());
-    $cat = Furbook\Cat::create(Input::all());//insert into
-    return redirect('cats/'.$cat->id)->with('cat',$cat)->withSuccess('Creat cat success');
-});
+// Route::post('/cats',function(){
+//     //dd(Request::all());
+//     //dd(Input::all());
+//     $cat = Furbook\Cat::create(Input::all());//insert into
+//     return redirect('cats/'.$cat->id)->with('cat',$cat)->withSuccess('Creat cat success');
+// });
 
-//Update cat
-Route::get('/cats/{id}/edit',function($id){
-    $cat = Furbook\Cat::find($id);
-    return view('cats.edit')->with('cat', $cat);
-    // echo sprintf('edit cat #'.$id);
-});
+// //Update cat
+// Route::get('/cats/{id}/edit',function($id){
+//     $cat = Furbook\Cat::find($id);
+//     return view('cats.edit')->with('cat', $cat);
+//     // echo sprintf('edit cat #'.$id);
+// });
 
-Route::put('/cats/{id}',function($id){
-    //dd(Input::all());
-    $cat = Furbook\Cat::find($id);
-    $cat->update(Input::all());
-    return redirect('cats/'.$cat->id)->withSuccess('Update cat success');
-});
-//delete cat
-Route::get('/cats/{id}/delete',function($id){
-    $cat = Furbook\Cat::find($id);
-    $cat->delete();
-    return redirect('cats/')->withSuccess('Delete cat success');
-});
+// Route::put('/cats/{id}',function($id){
+//     //dd(Input::all());
+//     $cat = Furbook\Cat::find($id);
+//     $cat->update(Input::all());
+//     return redirect('cats/'.$cat->id)->withSuccess('Update cat success');
+// });
+// //delete cat
+// Route::get('/cats/{id}/delete',function($id){
+//     $cat = Furbook\Cat::find($id);
+//     $cat->delete();
+//     return redirect('cats/')->withSuccess('Delete cat success');
+// });
 
-Route::delete('/cats/{id}',function($id){
-    //$id=Input::post('id');
-    //dd($id);
-    $cat = Furbook\Cat::find($id);
-    $cat->delete();
-    return redirect('cats/')->withSuccess('Delete cat success');
-});
+// Route::delete('/cats/{id}',function($id){
+//     //$id=Input::post('id');
+//     //dd($id);
+//     $cat = Furbook\Cat::find($id);
+//     $cat->delete();
+//     return redirect()->route('cat.index')->withSuccess('Delete cat success');
+// });
 
+
+Route::resource('cat','CatController');

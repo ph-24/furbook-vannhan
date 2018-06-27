@@ -34,7 +34,7 @@ class CatRequest extends FormRequest
     {
         return [
             'required' => 'Cột :attribute là bắt buộc.',
-            'max' => 'Cột :attribute độ dài phải nhỏ hơn:size .',
+            'max' => 'Cột :attribute độ dài phải nhỏ hơn:max .',
             'date_format' => 'Cột :attribute định dạng phải là "Y/m/d".',
             'numeric' => 'Cột :attribute phải là kiểu số.',
         ];

@@ -4,11 +4,22 @@ namespace Furbook\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Furbook\Cat;
+use Auth;
 use Validator;
 use Furbook\Http\Requests\CatRequest;
 
+
 class CatController extends Controller
 {
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+      $this->middleware('admin')->only('destroy');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -16,10 +27,11 @@ class CatController extends Controller
      */
     public function index()
     {
+        //dd(Auth::User());
         $cats = Cat::all();//select * form cats
     // dd($cats[0]->breed);
         return view('cats/index')->with('cats',$cats); 
-    }
+      }
 
     /**
      * Show the form for creating a new resource.
@@ -28,7 +40,7 @@ class CatController extends Controller
      */
     public function create()
     {
-        return view('cats.create');
+      return view('cats.create');
     }
 
     /**
@@ -41,19 +53,19 @@ class CatController extends Controller
     {
         //dd($request->all());
         //C1: 
-        $validator = $request->validate(
-            [
-                'name'=>'required|max:255',
-                'date_of_birth' => 'required|date_format:"Y/m/d"',
-                'breed_id'=>'required|numeric'
-            ],
-            [
-               'required' => 'Cột :attribute là bắt buộc.',
-               'max' => 'Cột :attribute độ dài phải nhỏ hơn :max .',
-               'date_format' => 'Cột :attribute định dạng phải là "Y/m/d".',
-               'numeric' => 'Cột :attribute phải là kiểu số.',
-           ]
-       );
+      $validator = $request->validate(
+        [
+          'name'=>'required|max:255',
+          'date_of_birth' => 'required|date_format:"Y/m/d"',
+          'breed_id'=>'required|numeric'
+        ],
+        [
+         'required' => 'Cột :attribute là bắt buộc.',
+         'max' => 'Cột :attribute độ dài phải nhỏ hơn :max .',
+         'date_format' => 'Cột :attribute định dạng phải là "Y/m/d".',
+         'numeric' => 'Cột :attribute phải là kiểu số.',
+       ]
+     );
        // 
        // C2: 
        //  $validator = Validator::make($request->all(), [
@@ -74,14 +86,18 @@ class CatController extends Controller
        //      ->withInput();
        //  }
        //  
+       //  get user_id
+      $user_id=Auth::user()->id;
+      $request->request->add(['user_id'=>$user_id]);
+       //dd($request->all());
         //insert cat
-        $cat = Cat::create($request->all());
+      $cat = Cat::create($request->all());
 
         //Redirect back show cat
-        return redirect()
-        ->route('cat.show',$cat->id)
-        ->with('cat',$cat)
-        ->withSuccess('Creat cat success');
+      return redirect()
+      ->route('cat.show',$cat->id)
+      ->with('cat',$cat)
+      ->withSuccess('Creat cat success');
     }
 
     /**
@@ -92,7 +108,7 @@ class CatController extends Controller
      */
     public function show(Cat $cat)
     {
-        return view('cats.show')->with('cat',$cat);
+      return view('cats.show')->with('cat',$cat);
     }
 
     /**
@@ -101,10 +117,14 @@ class CatController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Cat $cat)
     {
-        $cat = Cat::find($id);
-        return view('cats.edit')->with('cat', $cat);
+      if (!Auth::user()->canEdit($cat)) {
+        return redirect()
+        ->route('cat.index')
+        ->withErrors('Permission denied');
+      }
+      return view('cats.edit')->with('cat', $cat);
     }
 
     /**
@@ -116,10 +136,15 @@ class CatController extends Controller
      */
     public function update(CatRequest $request,Cat $cat)
     {
-       $cat->update($request->all());
-       return redirect()
-       ->route('cat.show', $cat->id)
-       ->withSuccess('Update cat success');
+      //  get user_id
+      $user_id=Auth::user()->id;
+      $request->request->add(['user_id'=>$user_id]);
+       //dd($request->all());
+      
+     $cat->update($request->all());
+     return redirect()
+     ->route('cat.show', $cat->id)
+     ->withSuccess('Update cat success');
    }
 
     /**
@@ -130,9 +155,9 @@ class CatController extends Controller
      */
     public function destroy(Cat $cat)
     {
-        $cat->delete();
-        return redirect()
-        ->route('cat.index')
-        ->withSuccess('Delete cat success');
+      $cat->delete();
+      return redirect()
+      ->route('cat.index')
+      ->withSuccess('Delete cat success');
     }
-}
+  }

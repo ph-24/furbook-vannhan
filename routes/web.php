@@ -41,11 +41,11 @@ Route::get('/', function () {
 //     return view('cats/index')->with('cats',$cats);   
 // });
 
-//Display list cats of breed name
-Route::get('/cats/breeds/{name}',function($name){
-    $breed=Furbook\breed::with('cats')->where('name',$name)->first();//lay ra 1 phan tu duy nhat
-    return view('cats.index')->with('breed',$breed)->with('cats', $breed->cats);
-});
+// //Display list cats of breed name
+// Route::get('/cats/breeds/{name}',function($name){
+//     $breed=Furbook\breed::with('cats')->where('name',$name)->first();//lay ra 1 phan tu duy nhat
+//     return view('cats.index')->with('breed',$breed)->with('cats', $breed->cats);
+// });
 
 // //Display info cat
 // DB::enableQueryLog();//kiem tra cau lenh sql
@@ -97,8 +97,15 @@ Route::get('/cats/breeds/{name}',function($name){
 //     return redirect()->route('cat.index')->withSuccess('Delete cat success');
 // });
 
-
-Route::resource('cat','CatController');
+Route::group(['middleware'=>'auth'],function(){
+    Route::resource('cat','CatController');
+    
+    //Display list cats of breed name
+    Route::get('/cats/breeds/{name}',function($name){
+    $breed=Furbook\breed::with('cats')->where('name',$name)->first();//lay ra 1 phan tu duy nhat
+    return view('cats.index')->with('breed',$breed)->with('cats', $breed->cats);
+});
+});
 
 Auth::routes();
 

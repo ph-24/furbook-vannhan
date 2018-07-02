@@ -2,7 +2,7 @@
 
 namespace Furbook;
 
-use Cat;
+use Furbook\Cat;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -38,14 +38,14 @@ class User extends Authenticatable
     }
     public function owns(Cat $cat)
     {
-        return $this->id == $car->user_id;
+        return $this->id == $cat->user_id;
     }
-    public function canEdit()
+    public function canEdit(Cat $cat)
     {
-        return $this->is_admin || return $this->owns($cat);
+        return $this->is_admin || $this->owns($cat);
     }
-    public function isAdministrator()
+    public function IsAdministrator()
     {
-        return $this->
+        return $this->getAttribute('is_admin');
     }
 }
